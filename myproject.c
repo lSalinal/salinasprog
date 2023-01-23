@@ -218,19 +218,3 @@ void MULL(int a, int b)
     S[b] = multiply & 15;
     S[a] = multiply >> 4;
 }
-void push(int a)
-    {
-        for (int i = 0 ; i<64 ; i++)
-        {
-            stack[i+1] = stack[i];
-        }
-        stack[0] = S[a]; 
-    }
-void pop(int a)
-    {
-        stack[a] = stack[0];
-        for(int i=0 ; i<64 ; i++)
-        {
-            stack[i] = stack[i+1];
-        }
-    }

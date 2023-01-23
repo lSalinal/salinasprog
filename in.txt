@@ -1,0 +1,8 @@
+mov S0, 5
+mov S1, 2
+JMP 8
+add S2, S0, S1
+SUB S3, S0, S1
+add S4, S0, S1
+SUB S5, S0, S1
+DUMP_REGS 

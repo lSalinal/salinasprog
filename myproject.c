@@ -7,8 +7,9 @@ int S[32];
 int Imm;
 int stability[8];
 int stack[64];
+int lines;
 
-void p_flag(int result) 
+void p_flag(int result)
 {
     int count = 0;
     while (result > 0)
@@ -185,12 +186,12 @@ void DUMP_REGS_F()
 {
     FILE *file;
     file = fopen("regs.txt", "w");
-    for(int i=0 ; i<32 ; i++)
+    for (int i = 0; i < 32; i++)
     {
         fprintf(file, "%d  ", S[i]);
     }
     fprintf(file, "\n");
-    for(int i=0; i<8; i++)
+    for (int i = 0; i < 8; i++)
     {
         fprintf(file, "%d  ", stability[i]);
     }
@@ -198,7 +199,7 @@ void DUMP_REGS_F()
 }
 void INPUT()
 {
-    scanf("%d", &S[0]);
+    scanf("%d ", &S[0]);
 }
 void OUTPUT()
 {
@@ -221,30 +222,30 @@ void MULL(int a, int b)
     S[a] = multiply >> 4;
 }
 void PUSH(int a)
+{
+    for (int i = 0; i < 64; i++)
     {
-        for (int i = 0 ; i<64 ; i++)
-        {
-            stack[i+1] = stack[i];
-        }
-        stack[0] = S[a]; 
+        stack[i + 1] = stack[i];
     }
+    stack[0] = S[a];
+}
 void POP(int a)
+{
+    stack[a] = stack[0];
+    for (int i = 0; i < 64; i++)
     {
-        stack[a] = stack[0];
-        for(int i=0 ; i<64 ; i++)
-        {
-            stack[i] = stack[i+1];
-        }
+        stack[i] = stack[i + 1];
     }
+}
 
-int main(int argc, char*argv[])
+int main(int argc, char *argv[])
 {
     int first, second, third;
     int count = 0;
     char temp[1000];
     char file_name[32];
     FILE *inputs;
-    if(argc<1)
+    if (argc < 1)
     {
         inputs = fopen("in.txt", "r");
     }
@@ -272,8 +273,21 @@ int main(int argc, char*argv[])
             exit(0);
         }
         else if (strcmp(check, "JMP") == 0)
-        {}
-            
+        {
+            printf("ssssssssssssss");
+            sscanf(temp, "JMP %d", &first);
+            lines = 0;
+            fseek(inputs, lines, SEEK_SET);
+            while (lines + 1 < first)
+            {
+                char chars;
+                chars = fgetc(inputs);
+                if (chars == '\n')
+                {
+                    lines++;
+                }
+            }
+        }
         else if (strcmp(check, "ADD") == 0)
         {
             sscanf(temp, "ADD S%d, S%d, S%d", &first, &second, &third);
@@ -367,6 +381,16 @@ int main(int argc, char*argv[])
         {
             sscanf(temp, "DIV S%d, S%d", &first, &second);
             DIV(first, second);
+        }
+        else if (strcmp(check, "POP") == 0)
+        {
+            sscanf(temp, "POP S%d", &first);
+            POP(first);
+        }
+        else if (strcmp(check, "PUSH") == 0)
+        {
+            sscanf(temp, "PUSH S%d", &first);
+            PUSH(first);
         }
         else
         {

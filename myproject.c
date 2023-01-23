@@ -171,14 +171,15 @@ void SWP(int a, int b)
 }
 void DUMP_REGS()
 {
+    printf("\033[30mRegisters:\n");
     for (int i = 0; i < 32; i++)
     {
-        printf("%d  ", S[i]);
+        printf("\033[0m%d  ", S[i]);
     }
-    printf("\n");
+    printf("\n\033[30mStatus:\n");
     for (int i = 0; i < 8; i++)
     {
-        printf("%d  ", stability[i]);
+        printf("\033[0m%d  ", stability[i]);
     }
 }
 void DUMP_REGS_F()
@@ -198,11 +199,12 @@ void DUMP_REGS_F()
 }
 void INPUT()
 {
-    scanf("%d ", &S[0]);
+    printf("\033[34mS[0] is equal to: ");
+    scanf("%d", &S[0]);
 }
 void OUTPUT()
 {
-    printf("%d ", S[0]);
+    printf("\033[34mS[0] = %d\n", S[0]);
 }
 void DIV(int a, int b)
 {
@@ -408,7 +410,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            printf("The instruction not supported!\n");
+            printf("\033[31mThe instruction in line '%d' is not supported!\n", count);
         }
     }
     fclose(inputs);

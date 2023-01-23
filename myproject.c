@@ -7,7 +7,6 @@ int S[32];
 int Imm;
 int stability[8];
 int stack[64];
-int lines;
 
 void p_flag(int result)
 {
@@ -237,6 +236,13 @@ void POP(int a)
         stack[i] = stack[i + 1];
     }
 }
+int SKIE(int a, int b)
+{
+    if (S[a] == S[b])
+    {
+        return 0;
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -245,13 +251,13 @@ int main(int argc, char *argv[])
     char temp[1000];
     char file_name[32];
     FILE *inputs;
-    if (argc < 1)
+    if (argc < 2)
     {
         inputs = fopen("in.txt", "r");
     }
     else
     {
-        inputs = fopen(argv[1], "r");
+        inputs = fopen(argv[2], "r");
     }
     while (fscanf(inputs, "%[^\n]\ns", temp) != -1)
     {
@@ -268,17 +274,17 @@ int main(int argc, char *argv[])
             check[j] = temp[j];
             check[j + 1] = '\0';
         }
+
         if (strcmp(check, "EXIT") == 0)
         {
             exit(0);
         }
         else if (strcmp(check, "JMP") == 0)
         {
-            printf("ssssssssssssss");
+            int lines = 1;
             sscanf(temp, "JMP %d", &first);
-            lines = 0;
             fseek(inputs, lines, SEEK_SET);
-            while (lines + 1 < first)
+            while (lines < first)
             {
                 char chars;
                 chars = fgetc(inputs);
@@ -286,6 +292,14 @@ int main(int argc, char *argv[])
                 {
                     lines++;
                 }
+            }
+        }
+        else if (strcmp(check, "SKIE") == 0)
+        {
+            sscanf(temp, "SKIE S%d, S%d", &first, &second);
+            if (SKIE(first, second) == 0)
+            {
+                fscanf(inputs, "%[^\n]\n", check);
             }
         }
         else if (strcmp(check, "ADD") == 0)
@@ -394,7 +408,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            printf("The instruction not supported! ");
+            printf("The instruction not supported!\n");
         }
     }
     fclose(inputs);

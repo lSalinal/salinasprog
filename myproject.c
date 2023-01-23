@@ -6,6 +6,8 @@
 int S[32];
 int Imm;
 int stability[8];
+int stack[64];
+
 void p_flag(int result) 
 {
     int count = 0;
@@ -217,4 +219,159 @@ void MULL(int a, int b)
     int multiply = S[a] * S[b];
     S[b] = multiply & 15;
     S[a] = multiply >> 4;
+}
+void PUSH(int a)
+    {
+        for (int i = 0 ; i<64 ; i++)
+        {
+            stack[i+1] = stack[i];
+        }
+        stack[0] = S[a]; 
+    }
+void POP(int a)
+    {
+        stack[a] = stack[0];
+        for(int i=0 ; i<64 ; i++)
+        {
+            stack[i] = stack[i+1];
+        }
+    }
+
+int main(int argc, char*argv[])
+{
+    int first, second, third;
+    int count = 0;
+    char temp[1000];
+    char file_name[32];
+    FILE *inputs;
+    if(argc<1)
+    {
+        inputs = fopen("in.txt", "r");
+    }
+    else
+    {
+        inputs = fopen(argv[1], "r");
+    }
+    while (fscanf(inputs, "%[^\n]\ns", temp) != -1)
+    {
+        count++;
+        char check[16];
+
+        for (int i = 0; i < sizeof(temp); i++)
+        {
+            temp[i] = toupper(temp[i]);
+        }
+
+        for (int j = 0; temp[j] != ' '; j++)
+        {
+            check[j] = temp[j];
+            check[j + 1] = '\0';
+        }
+        if (strcmp(check, "EXIT") == 0)
+        {
+            exit(0);
+        }
+        else if (strcmp(check, "JMP") == 0)
+        {}
+            
+        else if (strcmp(check, "ADD") == 0)
+        {
+            sscanf(temp, "ADD S%d, S%d, S%d", &first, &second, &third);
+            ADD(first, second, third);
+        }
+        else if (strcmp(check, "SUB") == 0)
+        {
+            sscanf(temp, "SUB S%d, S%d, S%d", &first, &second, &third);
+            SUB(first, second, third);
+        }
+        else if (strcmp(check, "AND") == 0)
+        {
+            sscanf(temp, "AND S%d, S%d, S%d", &first, &second, &third);
+            AND(first, second, third);
+        }
+        else if (strcmp(check, "XOR") == 0)
+        {
+            sscanf(temp, "XOR S%d, S%d, S%d", &first, &second, &third);
+            XOR(first, second, third);
+        }
+        else if (strcmp(check, "OR") == 0)
+        {
+            sscanf(temp, "OR S%d, S%d, S%d", &first, &second, &third);
+            OR(first, second, third);
+        }
+        else if (strcmp(check, "ADDI") == 0)
+        {
+            sscanf(temp, "ADDI S%d, S%d, %d", &first, &second, &third);
+            ADDI(first, second, third);
+        }
+        else if (strcmp(check, "SUBI") == 0)
+        {
+            sscanf(temp, "SUBI S%d, S%d, %d", &first, &second, &third);
+            SUBI(first, second, third);
+        }
+        else if (strcmp(check, "ANDI") == 0)
+        {
+            sscanf(temp, "ANDI S%d, S%d, %d", &first, &second, &third);
+            ADDI(first, second, third);
+        }
+        else if (strcmp(check, "XORI") == 0)
+        {
+            sscanf(temp, "XORI S%d, S%d, %d", &first, &second, &third);
+            XORI(first, second, third);
+        }
+        else if (strcmp(check, "ORI") == 0)
+        {
+            sscanf(temp, "ORI S%d, S%d, %d", &first, &second, &third);
+            ORI(first, second, third);
+        }
+        else if (strcmp(check, "MOV") == 0)
+        {
+            if (temp[8] == 'S' || temp[9] == 'S')
+            {
+                sscanf(temp, "MOV S%d, S%d", &first, &second);
+                MOV(first, S[second]);
+            }
+            else
+            {
+                sscanf(temp, "MOV S%d, %d", &first, &second);
+                MOV(first, second);
+            }
+        }
+        else if (strcmp(check, "SWP") == 0)
+        {
+            sscanf(temp, "SWP S%d, S%d", &first, &second);
+            SWP(first, second);
+        }
+        else if (strcmp(check, "DUMP_REGS") == 0)
+        {
+            DUMP_REGS();
+        }
+        else if (strcmp(check, "DUMP_REGS_F") == 0)
+        {
+            DUMP_REGS_F();
+        }
+        else if (strcmp(check, "INPUT") == 0)
+        {
+            INPUT();
+        }
+        else if (strcmp(check, "OUTPUT") == 0)
+        {
+            OUTPUT();
+        }
+        else if (strcmp(check, "MULL") == 0)
+        {
+            sscanf(temp, "MULL S%d, S%d", &first, &second);
+            MULL(first, second);
+        }
+        else if (strcmp(check, "DIV") == 0)
+        {
+            sscanf(temp, "DIV S%d, S%d", &first, &second);
+            DIV(first, second);
+        }
+        else
+        {
+            printf("The instruction not supported! ");
+        }
+    }
+    fclose(inputs);
 }

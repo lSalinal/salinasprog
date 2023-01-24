@@ -208,9 +208,9 @@ void OUTPUT()
 }
 void DIV(int a, int b)
 {
-    int sub = S[a] / S[b];
+    int s = S[a] / S[b];
     int rem = S[a] % S[b];
-    S[a] = sub;
+    S[a] = s;
     S[b] = rem;
     p_flag(S[a]);
     zero_flag(S[a]);
@@ -246,11 +246,14 @@ int SKIE(int a, int b)
     }
 }
 
+
 int main(int argc, char *argv[])
 {
     int first, second, third;
     int count = 0;
     char temp[1000];
+    char check[16];
+    char check_error[16];
     char file_name[32];
     FILE *inputs;
     if (argc < 2)
@@ -264,8 +267,6 @@ int main(int argc, char *argv[])
     while (fscanf(inputs, "%[^\n]\ns", temp) != -1)
     {
         count++;
-        char check[16];
-
         for (int i = 0; i < sizeof(temp); i++)
         {
             temp[i] = toupper(temp[i]);
@@ -274,7 +275,7 @@ int main(int argc, char *argv[])
         for (int j = 0; temp[j] != ' '; j++)
         {
             check[j] = temp[j];
-            check[j + 1] = '\0';
+            check[j+1] = '\0';
         }
 
         if (strcmp(check, "EXIT") == 0)
@@ -342,7 +343,7 @@ int main(int argc, char *argv[])
         else if (strcmp(check, "ANDI") == 0)
         {
             sscanf(temp, "ANDI S%d, S%d, %d", &first, &second, &third);
-            ADDI(first, second, third);
+            ANDI(first, second, third);
         }
         else if (strcmp(check, "XORI") == 0)
         {
@@ -410,7 +411,31 @@ int main(int argc, char *argv[])
         }
         else
         {
+            int ans;
             printf("\033[31mThe instruction in line '%d' is not supported!\n", count);
+            printf("\033[0mThere are two main reasons for this error:\n1.Misspelling of a function\n2.Not following the strandard instruction of a command\n");
+            printf("To see the solution type 1 or 2:\n");
+            scanf("%d", &ans);
+            if(ans==1)
+            {
+                printf("\033[32mTo fix problem No.1: Make sure your commands are either of the following list:\n");
+                printf("add, sub, and, xor, or, addi, subi, andi, xori, ori, mov, swp, dump_regs, dump_regs_f, input, output, div, mull, push, pop, jmp, skie & exit.\n");
+            }
+            if(ans==2)
+            {
+                printf("\033[32mTo fix problem No.2: Make sure your commands follow the instruction bellow:\n");
+                printf("For add, sub, and, xor, or:\nFUNC/func + 'space' + Snum + ',' + 'space' + Snum + ',' + 'space' + Snum\n");
+                printf("For addi, subi, andi, xori, ori:\nFUNC/func + 'space' + Snum + ',' + 'space' + Snum + ',' + 'space' + Imm\n");
+                printf("For swp, div, mull, skie:\nFUNC/func + 'space' + Snum + ',' + 'space' + Snum\n");
+                printf("For push, pop:\nFUNC/func + 'space' + Snum + ',' + 'space' + Snum\n");
+                printf("For dump_regs, dump_regs_f, input, output, exit:\nNothig at all\n");
+                printf("mov can be:\neiter (FUNC/func + 'space' + Snum + ',' + 'space' + Snum) or (FUNC/func + 'space' + Snum + ',' + 'space' + Imm)\n");
+            }
+            else
+            {
+                continue;
+            }
+           
         }
     }
     fclose(inputs);

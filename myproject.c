@@ -249,11 +249,17 @@ int SKIE(int a, int b)
         return 0;
     }
 }
+void ERROR(int a, int b, int c, int d)
+{
+    if(a<0 || b<0 || c<0 || d<0 || a>31 || b>31 || c>31 || d>31)
+    {
+        printf("\n\033[31mBecareful! Index should be positive & smaller than 32.(line %d)\n", d);
+    }
+}
 
 int main(int argc, char *argv[])
 {
     int first, second, third;
-    int c = 0;
     int all_lines = 0;
     int current_line = 0;
     int count_jmp_up = 1;
@@ -308,7 +314,7 @@ int main(int argc, char *argv[])
             }
             else if (first > all_lines)
             {
-                printf("\n\033[31mTHERE ARE ONLY '%d' LINES, YOU CAN'T JUMP TO THE LINE '%d'\n!", all_lines, first);
+                printf("\n\033[31mTHERE ARE ONLY '%d' LINES, YOU CAN'T JUMP TO THE LINE '%d'!\n", all_lines, first);
             }
             else
             {
@@ -341,56 +347,68 @@ int main(int argc, char *argv[])
             {
                 fscanf(inputs, "%[^\n]\n", check);
             }
+            ERROR(first, second, 6, current_line);
+            current_line++;
         }
         else if (strcmp(check, "ADD") == 0)
         {
             sscanf(temp, "ADD S%d, S%d, S%d", &first, &second, &third);
             ADD(first, second, third);
+            ERROR(first, second, third, current_line);
         }
         else if (strcmp(check, "SUB") == 0)
         {
             sscanf(temp, "SUB S%d, S%d, S%d", &first, &second, &third);
             SUB(first, second, third);
+            ERROR(first, second, third, current_line);
         }
         else if (strcmp(check, "AND") == 0)
         {
             sscanf(temp, "AND S%d, S%d, S%d", &first, &second, &third);
             AND(first, second, third);
+            ERROR(first, second, third, current_line);
         }
         else if (strcmp(check, "XOR") == 0)
         {
             sscanf(temp, "XOR S%d, S%d, S%d", &first, &second, &third);
             XOR(first, second, third);
+            ERROR(first, second, third, current_line);
         }
         else if (strcmp(check, "OR") == 0)
         {
             sscanf(temp, "OR S%d, S%d, S%d", &first, &second, &third);
             OR(first, second, third);
+            ERROR(first, second, third, current_line);
         }
         else if (strcmp(check, "ADDI") == 0)
         {
             sscanf(temp, "ADDI S%d, S%d, %d", &first, &second, &third);
             ADDI(first, second, third);
+            ERROR(first, second, 6, current_line);
         }
         else if (strcmp(check, "SUBI") == 0)
         {
             sscanf(temp, "SUBI S%d, S%d, %d", &first, &second, &third);
             SUBI(first, second, third);
+            ERROR(first, second, 6, current_line);
         }
         else if (strcmp(check, "ANDI") == 0)
         {
             sscanf(temp, "ANDI S%d, S%d, %d", &first, &second, &third);
             ANDI(first, second, third);
+            ERROR(first, second, 6, current_line);
         }
         else if (strcmp(check, "XORI") == 0)
         {
             sscanf(temp, "XORI S%d, S%d, %d", &first, &second, &third);
             XORI(first, second, third);
+            ERROR(first, second, 6, current_line);
         }
         else if (strcmp(check, "ORI") == 0)
         {
             sscanf(temp, "ORI S%d, S%d, %d", &first, &second, &third);
             ORI(first, second, third);
+            ERROR(first, second, 6, current_line);
         }
         else if (strcmp(check, "MOV") == 0)
         {
@@ -398,17 +416,20 @@ int main(int argc, char *argv[])
             {
                 sscanf(temp, "MOV S%d, S%d", &first, &second);
                 MOV(first, S[second]);
+                ERROR(first, second, 6, current_line);
             }
             else
             {
                 sscanf(temp, "MOV S%d, %d", &first, &second);
                 MOV(first, second);
+                ERROR(first, 6, 6, current_line);
             }
         }
         else if (strcmp(check, "SWP") == 0)
         {
             sscanf(temp, "SWP S%d, S%d", &first, &second);
             SWP(first, second);
+            ERROR(first, second, 6, current_line);
         }
         else if (strcmp(check, "DUMP_REGS") == 0)
         {
@@ -430,28 +451,33 @@ int main(int argc, char *argv[])
         {
             sscanf(temp, "MULL S%d, S%d", &first, &second);
             MULL(first, second);
+            ERROR(first, second, 6, current_line);
         }
         else if (strcmp(check, "DIV") == 0)
         {
             sscanf(temp, "DIV S%d, S%d", &first, &second);
             DIV(first, second);
+            ERROR(first, second, 6, current_line);
         }
         else if (strcmp(check, "POP") == 0)
         {
             sscanf(temp, "POP S%d", &first);
             POP(first);
+            ERROR(first, 6, 6, current_line);
         }
         else if (strcmp(check, "PUSH") == 0)
         {
             sscanf(temp, "PUSH S%d", &first);
             PUSH(first);
+            ERROR(first, 6, 6, current_line);
         }
         else
         {
             int ans;
-            printf("\n\033[31mThe instruction '%s' in line '%d' is not supported!\n", check, current_line);
+            printf("\n\033[31mThe instruction '%s' in line '%d' is not supported!(Note:Line number may be incorrect because of JMP command.)\n", check, current_line);
             printf("\033[0mThere are two main reasons for this error:\n1.Misspelling of a function\n2.Not following the strandard instruction of a command\n");
-            printf("To see the solution type 1 or 2:\n");
+            printf("To see the solution type 1 or 2 + enter:\n");
+            printf("Press any number + enter to skip:\n");
             scanf("%d", &ans);
             if (ans == 1)
             {

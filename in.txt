@@ -3,9 +3,9 @@ mov S1, 5
 OR S3, S0, S1
 MOv S2, 6
 AdDI S10, S0, 10
-sUBI S11, S0, 10
-INPUT
-JMP 3
-mod S31, 31
-mov S30, 30
+sUBI S-3, S0, 10
+mo S31, 31
+mov S33, 30
 dump_regs
+exit
+jmp 8

@@ -10,16 +10,16 @@ int stack[64];
 
 void p_flag(int result)
 {
-    int count = 0;
+    int current_line = 0;
     while (result > 0)
     {
         if (result % 2 == 1)
         {
-            count++;
+            current_line++;
         }
         result /= 2;
     }
-    if (count % 2 == 1)
+    if (current_line % 2 == 1)
     {
         stability[0] = 1;
     }
@@ -171,7 +171,7 @@ void SWP(int a, int b)
 }
 void DUMP_REGS()
 {
-    printf("\033[30mRegisters:\n");
+    printf("\n\033[30mRegisters:\n");
     for (int i = 0; i < 32; i++)
     {
         printf("\033[0m%d  ", S[i]);
@@ -199,7 +199,7 @@ void DUMP_REGS_F()
 }
 void INPUT()
 {
-    printf("\033[34mS[0] is equal to: ");
+    printf("\n\033[34mS[0] is equal to: ");
     scanf("%d", &S[0]);
 }
 void OUTPUT()
@@ -221,6 +221,10 @@ void MULL(int a, int b)
     int multiply = S[a] * S[b];
     S[b] = multiply & 15;
     S[a] = multiply >> 4;
+    p_flag(multiply);
+    zero_flag(multiply);
+    sign_flag(multiply);
+    overflow_flag_mull(S[a], S[b], multiply);
 }
 void PUSH(int a)
 {
@@ -246,14 +250,15 @@ int SKIE(int a, int b)
     }
 }
 
-
 int main(int argc, char *argv[])
 {
     int first, second, third;
-    int count = 0;
+    int c = 0;
+    int all_lines = 0;
+    int current_line = 0;
+    int count_jmp_up = 1;
     char temp[1000];
     char check[16];
-    char check_error[16];
     char file_name[32];
     FILE *inputs;
     if (argc < 2)
@@ -262,11 +267,17 @@ int main(int argc, char *argv[])
     }
     else
     {
-        inputs = fopen(argv[2], "r");
+        inputs = fopen(argv[1], "r");
     }
-    while (fscanf(inputs, "%[^\n]\ns", temp) != -1)
+    while (fscanf(inputs, "%[^\n]\n", temp) != -1)
     {
-        count++;
+        all_lines++;
+    }
+    rewind(inputs);
+    while (fscanf(inputs, "%[^\n]\n", temp) != -1)
+    {
+        current_line++;
+        char check[16] = {'\0'};
         for (int i = 0; i < sizeof(temp); i++)
         {
             temp[i] = toupper(temp[i]);
@@ -275,7 +286,7 @@ int main(int argc, char *argv[])
         for (int j = 0; temp[j] != ' '; j++)
         {
             check[j] = temp[j];
-            check[j+1] = '\0';
+            // check[j+1] = '\0';
         }
 
         if (strcmp(check, "EXIT") == 0)
@@ -284,18 +295,44 @@ int main(int argc, char *argv[])
         }
         else if (strcmp(check, "JMP") == 0)
         {
-            int lines = 1;
+            int lines_jmp = 1;
             sscanf(temp, "JMP %d", &first);
-            fseek(inputs, lines, SEEK_SET);
-            while (lines < first)
+            if(count_jmp_up > 3)
             {
-                char chars;
-                chars = fgetc(inputs);
-                if (chars == '\n')
+                printf("\n\033[31mINFINIT LOOP! PROCEDURE SKIPPED AFTER 3 TIME.\n"); 
+                continue;
+            }
+            if (first < 1)
+            {
+                printf("\n\033[31mTHE NUMBER OFLINES HAS TO BE POSITIVE!\n");
+            }
+            else if (first > all_lines)
+            {
+                printf("\n\033[31mTHERE ARE ONLY '%d' LINES, YOU CAN'T JUMP TO THE LINE '%d'\n!", all_lines, first);
+            }
+            else
+            {
+                fseek(inputs, lines_jmp, SEEK_SET);
+                while (lines_jmp < first)
                 {
-                    lines++;
+                    char chars;
+                    chars = fgetc(inputs);
+                    if (chars == '\n')
+                    {
+                        lines_jmp++;
+                    }
                 }
             }
+            count_jmp_up++;
+            current_line = lines_jmp - 1;
+            // else
+            // {
+            //     printf("\n\033[31mINFINIT LOOP!\n");
+            //     // fscanf(inputs, "%[^\n]\n", check);
+            //     continue;
+            // }
+            // // printf("%d", lines_jmp);
+            // //  current_line += first;
         }
         else if (strcmp(check, "SKIE") == 0)
         {
@@ -412,16 +449,16 @@ int main(int argc, char *argv[])
         else
         {
             int ans;
-            printf("\033[31mThe instruction in line '%d' is not supported!\n", count);
+            printf("\n\033[31mThe instruction '%s' in line '%d' is not supported!\n", check, current_line);
             printf("\033[0mThere are two main reasons for this error:\n1.Misspelling of a function\n2.Not following the strandard instruction of a command\n");
             printf("To see the solution type 1 or 2:\n");
             scanf("%d", &ans);
-            if(ans==1)
+            if (ans == 1)
             {
                 printf("\033[32mTo fix problem No.1: Make sure your commands are either of the following list:\n");
                 printf("add, sub, and, xor, or, addi, subi, andi, xori, ori, mov, swp, dump_regs, dump_regs_f, input, output, div, mull, push, pop, jmp, skie & exit.\n");
             }
-            if(ans==2)
+            if (ans == 2)
             {
                 printf("\033[32mTo fix problem No.2: Make sure your commands follow the instruction bellow:\n");
                 printf("For add, sub, and, xor, or:\nFUNC/func + 'space' + Snum + ',' + 'space' + Snum + ',' + 'space' + Snum\n");
@@ -435,7 +472,6 @@ int main(int argc, char *argv[])
             {
                 continue;
             }
-           
         }
     }
     fclose(inputs);

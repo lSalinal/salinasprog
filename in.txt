@@ -1,13 +1,11 @@
 MOv S0, 4
 mov S1, 5
+OR S3, S0, S1
 MOv S2, 6
-mov S3, 7
-MOv S4, 8
-mov S5, 9
-MOv S6, 10
-mov S7, 0
-ADDI S8, S2, 10
-andi S10, S0, 10
-sub S11, S0, 10
-orid S12, S0, 10
-dump_regs_f
+AdDI S10, S0, 10
+sUBI S11, S0, 10
+INPUT
+JMP 3
+mod S31, 31
+mov S30, 30
+dump_regs

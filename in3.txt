@@ -1,0 +1,8 @@
+Hell o World!
+mov S10, 10
+mov S9, 9
+sub S11, S10, S9
+subi s12, s12, 12
+dump_regs
+jmp 4
+input

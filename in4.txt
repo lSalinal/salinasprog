@@ -1,0 +1,10 @@
+mov s0, 1000
+mov s5, 2000
+jmp 8
+mov s10, 3000
+mov s15, 4000
+mov s20, 5000
+mov s25, 6000
+Say it, say my name
+swp S0, S5
+DUMP_REGS

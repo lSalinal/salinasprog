@@ -1,11 +1,15 @@
-MOv S0, 4
-mov S1, 5
-OR S3, S0, S1
-MOv S2, 6
-AdDI S10, S0, 10
+dump_regs
+input
+MOv S1, 4
+mov S2, 5
+add S3, S0, S1
+MOv S4, 6
+ori S10, S33, 10
 sUBI S-3, S0, 10
 mo S31, 31
-mov S33, 30
+mov S30, 30
+jmp -64
+jmp 64
 dump_regs
 exit
-jmp 8
+input

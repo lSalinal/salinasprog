@@ -1,0 +1,16 @@
+output
+mov S0, 10
+output
+mov s1, 11
+mov s2, s1
+skie S1, S2
+input
+mov s3, 33
+mov s30, 21
+mov S31, 4
+DUMP_REGS
+mull S1, S2
+dump_regs //user: ZZA pass:MMA
+div s30, s31
+dump_regs
+DUMP_REGS_F

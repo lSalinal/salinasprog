@@ -10,16 +10,16 @@ int stack[64];
 
 void p_flag(int result)
 {
-    int current_line = 0;
+    int count = 0;
     while (result > 0)
     {
         if (result % 2 == 1)
         {
-            current_line++;
+            count++;
         }
         result /= 2;
     }
-    if (current_line % 2 == 1)
+    if (count % 2 == 1)
     {
         stability[0] = 1;
     }
@@ -52,7 +52,7 @@ void sign_flag(int result)
 }
 void overflow_flag_add(int a, int b, int c)
 {
-    if (b > 0 && c > 0 && a < 0 || b < 0 && c < 0 && a < 0)
+    if (b > 0 && c > 0 && a < 0 || b < 0 && c < 0 && a > 0)
     {
         stability[5] = 1;
     }
@@ -83,6 +83,7 @@ void overflow_flag_mull(int a, int b, int c)
         stability[5] = 0;
     }
 }
+
 void ADD(int a, int b, int c)
 {
     S[a] = S[b] + S[c];
@@ -265,7 +266,6 @@ int main(int argc, char *argv[])
     int count_jmp_up = 1;
     char temp[1000];
     char check[16];
-    char file_name[32];
     FILE *inputs;
     if (argc < 2)
     {
@@ -292,7 +292,6 @@ int main(int argc, char *argv[])
         for (int j = 0; temp[j] != ' '; j++)
         {
             check[j] = temp[j];
-            // check[j+1] = '\0';
         }
 
         if (strcmp(check, "EXIT") == 0)
@@ -305,12 +304,12 @@ int main(int argc, char *argv[])
             sscanf(temp, "JMP %d", &first);
             if(count_jmp_up > 3)
             {
-                printf("\n\033[31mINFINIT LOOP! PROCEDURE SKIPPED AFTER 3 TIME.\n"); 
+                printf("\n\033[31mINFINIT LOOP! PROCEDURE SKIPPED AFTER 3 TIME.(line %d)\n", current_line); 
                 continue;
             }
             if (first < 1)
             {
-                printf("\n\033[31mTHE NUMBER OFLINES HAS TO BE POSITIVE!\n");
+                printf("\n\033[31mTHE NUMBER OF LINES HAS TO BE POSITIVE!(line %d)\n", current_line);
             }
             else if (first > all_lines)
             {
